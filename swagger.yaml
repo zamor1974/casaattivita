@@ -1,5 +1,10 @@
 definitions:
-  Altitude:
+  Activities:
+    items:
+      $ref: '#/definitions/Activity'
+    type: array
+    x-go-package: casaattivita/models
+  Activity:
     properties:
       data_inserimento:
         description: |-
@@ -10,25 +15,13 @@ definitions:
         x-go-name: DateInsert
       id:
         description: |-
-          Id of rain value
+          Id of Activity value
           in: int64
         format: int64
         type: integer
         x-go-name: Id
-      valore:
-        description: |-
-          Value of Altitude
-          in: int
-        format: float
-        type: number
-        x-go-name: Value
     type: object
-    x-go-package: casaaltitudine/models
-  Altitudes:
-    items:
-      $ref: '#/definitions/Altitude'
-    type: array
-    x-go-package: casaaltitudine/models
+    x-go-package: casaattivita/models
   CommonError:
     properties:
       message:
@@ -45,7 +38,7 @@ definitions:
         type: integer
         x-go-name: Status
     type: object
-    x-go-package: casaaltitudine/controllers
+    x-go-package: casaattivita/controllers
   CommonSuccess:
     properties:
       message:
@@ -62,11 +55,11 @@ definitions:
         type: integer
         x-go-name: Status
     type: object
-    x-go-package: casaaltitudine/controllers
-  GetAltitude:
+    x-go-package: casaattivita/controllers
+  GetActivities:
     properties:
       data:
-        $ref: '#/definitions/Altitude'
+        $ref: '#/definitions/Activities'
       message:
         description: |-
           Message of the response
@@ -81,11 +74,11 @@ definitions:
         type: integer
         x-go-name: Status
     type: object
-    x-go-package: casaaltitudine/controllers
-  GetAltitudes:
+    x-go-package: casaattivita/controllers
+  GetActivity:
     properties:
       data:
-        $ref: '#/definitions/Altitudes'
+        $ref: '#/definitions/Activity'
       message:
         description: |-
           Message of the response
@@ -100,31 +93,23 @@ definitions:
         type: integer
         x-go-name: Status
     type: object
-    x-go-package: casaaltitudine/controllers
-  ReqAddAltitude:
-    properties:
-      valore:
-        description: |-
-          Value of the Altitude
-          in: int
-        format: int64
-        type: integer
-        x-go-name: Value
+    x-go-package: casaattivita/controllers
+  ReqAddActivity:
     type: object
-    x-go-package: casaaltitudine/models
+    x-go-package: casaattivita/models
 info:
-  title: 'Altitude Api:'
+  title: 'Activity Api:'
   version: 0.1.1
 paths:
-  /altitude:
-    post:
-      description: Create a new altitude value
-      operationId: addAltitude
+  /activities:
+    get:
+      description: Get Activity list
+      operationId: listActivity
       responses:
         "200":
-          description: GetAltitude
+          description: GetActivities
           schema:
-            $ref: '#/definitions/GetAltitude'
+            $ref: '#/definitions/GetActivities'
         "401":
           description: CommonError
           schema:
@@ -132,15 +117,15 @@ paths:
       security:
       - apiKey:
         - '[]'
-  /altitudes:
-    get:
-      description: Get Altitude list
-      operationId: listAltitude
+  /activity:
+    post:
+      description: Create a new activity value
+      operationId: addActivities
       responses:
         "200":
-          description: GetAltitudes
+          description: GetActivity
           schema:
-            $ref: '#/definitions/GetAltitudes'
+            $ref: '#/definitions/GetActivity'
         "401":
           description: CommonError
           schema:
@@ -150,14 +135,14 @@ paths:
         - '[]'
   /lasthour:
     get:
-      description: Get list of last hour of altitude values .... or the last value
+      description: Get list of last hour of activity values .... or the last value
         inserted
       operationId: lastHour
       responses:
         "200":
-          description: GetAltitudes
+          description: GetActivities
           schema:
-            $ref: '#/definitions/GetAltitudes'
+            $ref: '#/definitions/GetActivities'
         "401":
           description: CommonError
           schema:
