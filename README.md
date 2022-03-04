@@ -1,0 +1,8 @@
+# casaattivita
+echo "# casaattivita" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/zamor1974/casaattivita.git
+git push -u origin main
