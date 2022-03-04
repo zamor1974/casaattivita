@@ -20,6 +20,13 @@ definitions:
         format: int64
         type: integer
         x-go-name: Id
+      valore:
+        description: |-
+          Value of Activity
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Value
     type: object
     x-go-package: casaattivita/models
   CommonError:
@@ -95,16 +102,24 @@ definitions:
     type: object
     x-go-package: casaattivita/controllers
   ReqAddActivity:
+    properties:
+      valore:
+        description: |-
+          Value of the Activity
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Value
     type: object
     x-go-package: casaattivita/models
 info:
   title: 'Activity Api:'
-  version: 0.1.1
+  version: 0.1.3
 paths:
   /activities:
     get:
       description: Get Activity list
-      operationId: listActivity
+      operationId: listRain
       responses:
         "200":
           description: GetActivities
@@ -119,8 +134,16 @@ paths:
         - '[]'
   /activity:
     post:
-      description: Create a new activity value
-      operationId: addActivities
+      description: Create a new Activity value
+      operationId: addActivity
+      parameters:
+      - description: 'name: body'
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ReqAddActivity'
+        x-go-name: Body
       responses:
         "200":
           description: GetActivity
@@ -135,8 +158,7 @@ paths:
         - '[]'
   /lasthour:
     get:
-      description: Get list of last hour of activity values .... or the last value
-        inserted
+      description: Get list of last hour of Activity .... or the last value inserted
       operationId: lastHour
       responses:
         "200":

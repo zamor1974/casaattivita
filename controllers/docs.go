@@ -1,5 +1,5 @@
 //  Activity Api:
-//   version: 0.1.1
+//   version: 0.1.3
 //   title: Activity Api
 //  Schemes: http, https
 //  BasePath:

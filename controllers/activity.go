@@ -61,7 +61,7 @@ type GetActivity struct {
 	// Message of the response
 	// in: string
 	Message string `json:"message"`
-	// Umidity value
+	// Activity for this user
 	Data *models.Activity `json:"data"`
 }
 
@@ -73,7 +73,7 @@ func ErrHandler(errmessage string) *CommonError {
 	return &errresponse
 }
 
-// swagger:route GET /activities listActivity
+// swagger:route GET /activities listRain
 // Get Activity list
 //
 // security:
@@ -95,7 +95,7 @@ func (h *BaseHandlerSqlx) GetActivitiesSqlx(w http.ResponseWriter, r *http.Reque
 }
 
 // swagger:route GET /lasthour lastHour
-// Get list of last hour of activity values .... or the last value inserted
+// Get list of last hour of Activity .... or the last value inserted
 //
 // security:
 // - apiKey: []
@@ -115,8 +115,8 @@ func (h *BaseHandlerSqlx) GetLastHourSqlx(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(response)
 }
 
-// swagger:route POST /activity addActivities
-// Create a new activity value
+// swagger:route POST /activity addActivity
+// Create a new Activity value
 //
 // security:
 // - apiKey: []
@@ -137,7 +137,7 @@ func (h *BaseHandlerSqlx) PostActivitySqlx(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	rain, errmessage := models.PostActivitySqlx(h.db.DB, reqActivity)
+	activity, errmessage := models.PostActivitySqlx(h.db.DB, reqActivity)
 	if errmessage != "" {
 		json.NewEncoder(w).Encode(ErrHandler(errmessage))
 		return
@@ -145,6 +145,6 @@ func (h *BaseHandlerSqlx) PostActivitySqlx(w http.ResponseWriter, r *http.Reques
 
 	response.Status = 1
 	response.Message = lang.Get("insert_success")
-	response.Data = rain
+	response.Data = activity
 	json.NewEncoder(w).Encode(response)
 }

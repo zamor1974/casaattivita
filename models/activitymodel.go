@@ -14,6 +14,9 @@ type Activity struct {
 	// Id of Activity value
 	// in: int64
 	Id int64 `json:"id"`
+	// Value of Activity
+	// in: int
+	Value int `json:"valore"`
 	// Timestamp of insert
 	// in: time
 	DateInsert time.Time `json:"data_inserimento"`
@@ -22,13 +25,16 @@ type Activity struct {
 type Activities []Activity
 
 type ReqAddActivity struct {
+	// Value of the Activity
+	// in: int
+	Value int `json:"valore" validate:"required"`
 }
 
-// swagger:parameters add Activity
+// swagger:parameters addActivity
 type ReqActivityBody struct {
 	// - name: body
 	//  in: body
-	//  description: Activity
+	//  description: name and status
 	//  schema:
 	//  type: object
 	//     "$ref": "#/definitions/ReqAddActivity"
@@ -49,7 +55,7 @@ func ErrHandler(err error) string {
 
 func GetActivitiesSqlx(db *sql.DB) *Activities {
 	activities := Activities{}
-	rows, err := db.Query("SELECT id, data_inserimento FROM attivita order by id desc")
+	rows, err := db.Query("SELECT id,0, data_inserimento FROM attivita order by id desc")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +63,7 @@ func GetActivitiesSqlx(db *sql.DB) *Activities {
 
 	for rows.Next() {
 		var p Activity
-		if err := rows.Scan(&p.Id, &p.DateInsert); err != nil {
+		if err := rows.Scan(&p.Id, &p.Value, &p.DateInsert); err != nil {
 			log.Fatal(err)
 		}
 		activities = append(activities, p)
@@ -66,7 +72,7 @@ func GetActivitiesSqlx(db *sql.DB) *Activities {
 }
 func GetLastActivitySqlx(db *sql.DB) *Activities {
 	activities := Activities{}
-	rows, err := db.Query("SELECT id, data_inserimento FROM attivita where id = (select max(id) from attivita)")
+	rows, err := db.Query("SELECT id, 0, data_inserimento FROM attivita where id = (select max(id) from attivita)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,7 +80,7 @@ func GetLastActivitySqlx(db *sql.DB) *Activities {
 
 	for rows.Next() {
 		var p Activity
-		if err := rows.Scan(&p.Id, &p.DateInsert); err != nil {
+		if err := rows.Scan(&p.Id, &p.Value, &p.DateInsert); err != nil {
 			log.Fatal(err)
 		}
 		activities = append(activities, p)
@@ -90,7 +96,7 @@ func GetLastHourSqlx(db *sql.DB) *Activities {
 	tInizio := time.Now().Add(time.Duration(-1) * time.Hour)
 	dataInizio := tInizio.Format("2006-01-02 15:04:05")
 
-	sqlStatement := fmt.Sprintf("SELECT id,data_inserimento FROM attivita where data_inserimento  >= '%s' AND data_inserimento <= '%s'", dataInizio, dataFine)
+	sqlStatement := fmt.Sprintf("SELECT id,0, data_inserimento FROM attivita where data_inserimento  >= '%s' AND data_inserimento <= '%s'", dataInizio, dataFine)
 
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
@@ -100,7 +106,7 @@ func GetLastHourSqlx(db *sql.DB) *Activities {
 
 	for rows.Next() {
 		var p Activity
-		if err := rows.Scan(&p.Id, &p.DateInsert); err != nil {
+		if err := rows.Scan(&p.Id, &p.Value, &p.DateInsert); err != nil {
 			log.Fatal(err)
 		}
 		activities = append(activities, p)
@@ -114,7 +120,9 @@ func GetLastHourSqlx(db *sql.DB) *Activities {
 }
 
 // PostActivitySqlx insert Activity value
-func PostActivitySqlx(db *sql.DB, reqTemperature *ReqAddActivity) (*Activity, string) {
+func PostActivitySqlx(db *sql.DB, reqrain *ReqAddActivity) (*Activity, string) {
+
+	//value := reqrain.Value
 
 	var activity Activity
 
@@ -122,7 +130,6 @@ func PostActivitySqlx(db *sql.DB, reqTemperature *ReqAddActivity) (*Activity, st
 
 	//sqlStatement := fmt.Sprintf("insert into 'pioggia' ('valore','data_inserimento') values (%d,CURRENT_TIMESTAMP) RETURNING id", value)
 	sqlStatement := fmt.Sprintf("insert into attivita (data_inserimento) values (CURRENT_TIMESTAMP) RETURNING id")
-	log.Println(sqlStatement)
 
 	err := db.QueryRow(sqlStatement).Scan(&lastInsertId)
 
@@ -130,7 +137,7 @@ func PostActivitySqlx(db *sql.DB, reqTemperature *ReqAddActivity) (*Activity, st
 		return &activity, ErrHandler(err)
 	}
 
-	sqlStatement1 := fmt.Sprintf("SELECT id,data_inserimento FROM attivita where id = %d", lastInsertId)
+	sqlStatement1 := fmt.Sprintf("SELECT id,0,data_inserimento FROM attivita where id = %d", lastInsertId)
 	rows, err := db.Query(sqlStatement1)
 
 	if err != nil {
@@ -140,7 +147,7 @@ func PostActivitySqlx(db *sql.DB, reqTemperature *ReqAddActivity) (*Activity, st
 
 	for rows.Next() {
 		var p Activity
-		if err := rows.Scan(&p.Id, &p.DateInsert); err != nil {
+		if err := rows.Scan(&p.Id, &p.Value, &p.DateInsert); err != nil {
 			// Check for a scan error.
 			// Query rows will be closed with defer.
 			log.Fatal(err)

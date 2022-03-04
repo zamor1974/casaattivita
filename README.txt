@@ -6,4 +6,3 @@ Installare DOCKER su QNAP
 Per creare lo swagger
 1) PATH=$(go env GOPATH)/bin:$PATH
 2) swagger generate spec -o ./swagger.yaml –scan-models
-swagger generate spec -o ./swagger.json --scan-models
