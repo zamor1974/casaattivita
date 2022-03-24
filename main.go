@@ -43,6 +43,7 @@ func main() {
 	pioggia.HandleFunc("/activity", hsqlx.PostActivitySqlx).Methods("POST")
 	pioggia.HandleFunc("/activities", hsqlx.GetActivitiesSqlx).Methods("GET")
 	pioggia.HandleFunc("/lasthour", hsqlx.GetLastHourSqlx).Methods("GET")
+	pioggia.HandleFunc("/isactive", hsqlx.GetIsActiveSqlx).Methods("GET")
 
 	http.Handle("/", r)
 	s := &http.Server{

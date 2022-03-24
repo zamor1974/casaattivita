@@ -53,6 +53,16 @@ type GetActivities struct {
 	Data    *models.Activities `json:"data"`
 }
 
+// swagger:model GetIsActive
+type GetIsActive struct {
+	// Status of the error
+	// in: int64
+	Status int64 `json:"status"`
+	// Message of the response
+	// in: string
+	Active bool `json:"active"`
+}
+
 // swagger:model GetActivity
 type GetActivity struct {
 	// Status of the error
@@ -89,6 +99,24 @@ func (h *BaseHandlerSqlx) GetActivitiesSqlx(w http.ResponseWriter, r *http.Reque
 	response.Status = 1
 	response.Message = lang.Get("success")
 	response.Data = activities
+
+	w.Header().Set("content-type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// swagger:route GET /isactive isactive
+// Get if sensor is online or offline
+//
+// responses:
+//  401: CommonError
+//  200: GetIsActive
+func (h *BaseHandlerSqlx) GetIsActiveSqlx(w http.ResponseWriter, r *http.Request) {
+	response := GetIsActive{}
+
+	isActive := models.GetIsActiveSqlx(h.db.DB)
+
+	response.Status = 1
+	response.Active = isActive
 
 	w.Header().Set("content-type", "application/json")
 	json.NewEncoder(w).Encode(response)

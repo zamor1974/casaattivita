@@ -24,6 +24,8 @@ type Activity struct {
 
 type Activities []Activity
 
+type IsActive bool
+
 type ReqAddActivity struct {
 	// Value of the Activity
 	// in: int
@@ -51,6 +53,17 @@ func ErrHandler(err error) string {
 		errmessage = lang.Get("something_went_wrong")
 	}
 	return errmessage
+}
+
+func GetIsActiveSqlx(db *sql.DB) bool {
+	var contatore int64
+
+	err := db.QueryRow("select count(id) as contatore from attivita where  data_inserimento <=now() and data_inserimento >= now() - INTERVAL '1 MINUTES'").Scan(&contatore)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return contatore > 0
 }
 
 func GetActivitiesSqlx(db *sql.DB) *Activities {
