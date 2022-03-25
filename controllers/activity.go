@@ -111,6 +111,7 @@ func (h *BaseHandlerSqlx) GetActivitiesSqlx(w http.ResponseWriter, r *http.Reque
 //  401: CommonError
 //  200: GetIsActive
 func (h *BaseHandlerSqlx) GetIsActiveSqlx(w http.ResponseWriter, r *http.Request) {
+
 	response := GetIsActive{}
 
 	isActive := models.GetIsActiveSqlx(h.db.DB)

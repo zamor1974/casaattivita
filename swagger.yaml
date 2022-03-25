@@ -101,6 +101,23 @@ definitions:
         x-go-name: Status
     type: object
     x-go-package: casaattivita/controllers
+  GetIsActive:
+    properties:
+      active:
+        description: |-
+          Message of the response
+          in: string
+        type: boolean
+        x-go-name: Active
+      status:
+        description: |-
+          Status of the error
+          in: int64
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: casaattivita/controllers
   ReqAddActivity:
     properties:
       valore:
@@ -156,6 +173,19 @@ paths:
       security:
       - apiKey:
         - '[]'
+  /isactive:
+    get:
+      description: Get if sensor is online or offline
+      operationId: isactive
+      responses:
+        "200":
+          description: GetIsActive
+          schema:
+            $ref: '#/definitions/GetIsActive'
+        "401":
+          description: CommonError
+          schema:
+            $ref: '#/definitions/CommonError'
   /lasthour:
     get:
       description: Get list of last hour of Activity .... or the last value inserted
