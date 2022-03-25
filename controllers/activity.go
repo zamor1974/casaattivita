@@ -53,6 +53,17 @@ type GetActivities struct {
 	Data    *models.Activities `json:"data"`
 }
 
+// swagger:model GetMessages
+type GetMessages struct {
+	// Status of the error
+	// in: int64
+	Status int64 `json:"status"`
+	// Message of the response
+	// in: string
+	Message string           `json:"message"`
+	Data    *models.Messages `json:"data"`
+}
+
 // swagger:model GetIsActive
 type GetIsActive struct {
 	// Status of the error
@@ -73,6 +84,18 @@ type GetActivity struct {
 	Message string `json:"message"`
 	// Activity for this user
 	Data *models.Activity `json:"data"`
+}
+
+// swagger:model GetMessage
+type GetMessage struct {
+	// Status of the error
+	// in: int64
+	Status int64 `json:"status"`
+	// Message of the response
+	// in: string
+	Message string `json:"message"`
+	// Message value
+	Data *models.Message `json:"data"`
 }
 
 // ErrHandler returns error message response
@@ -144,6 +167,27 @@ func (h *BaseHandlerSqlx) GetLastHourSqlx(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(response)
 }
 
+// swagger:route GET /messages messages
+// Get list of last hour of Messages .... or the last value inserted
+//
+// security:
+// - apiKey: []
+// responses:
+//  401: CommonError
+//  200: GetMessages
+func (h *BaseHandlerSqlx) GetMessagesSqlx(w http.ResponseWriter, r *http.Request) {
+	response := GetMessages{}
+
+	messages := models.GetMessagesSqlx(h.db.DB)
+
+	response.Status = 1
+	response.Message = lang.Get("success")
+	response.Data = messages
+
+	w.Header().Set("content-type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 // swagger:route POST /activity addActivity
 // Create a new Activity value
 //
@@ -167,6 +211,40 @@ func (h *BaseHandlerSqlx) PostActivitySqlx(w http.ResponseWriter, r *http.Reques
 	}
 
 	activity, errmessage := models.PostActivitySqlx(h.db.DB, reqActivity)
+	if errmessage != "" {
+		json.NewEncoder(w).Encode(ErrHandler(errmessage))
+		return
+	}
+
+	response.Status = 1
+	response.Message = lang.Get("insert_success")
+	response.Data = activity
+	json.NewEncoder(w).Encode(response)
+}
+
+// swagger:route POST /message addMessage
+// Create a new Message value
+//
+// security:
+// - apiKey: []
+// responses:
+//  401: CommonError
+//  200: GetMessage
+func (h *BaseHandlerSqlx) PostMessageSqlx(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	response := GetMessage{}
+
+	decoder := json.NewDecoder(r.Body)
+	var reqMessage *models.ReqAddMessage
+	err := decoder.Decode(&reqMessage)
+	fmt.Println(err)
+
+	if err != nil {
+		json.NewEncoder(w).Encode(ErrHandler(lang.Get("invalid_request")))
+		return
+	}
+
+	activity, errmessage := models.PostMessageSqlx(h.db.DB, reqMessage)
 	if errmessage != "" {
 		json.NewEncoder(w).Encode(ErrHandler(errmessage))
 		return

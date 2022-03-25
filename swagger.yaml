@@ -15,19 +15,19 @@ definitions:
         x-go-name: DateInsert
       id:
         description: |-
-          Id of Activity value
+          Id of Message value
           in: int64
         format: int64
         type: integer
         x-go-name: Id
-      valore:
+      messaggio:
         description: |-
-          Value of Activity
+          Value of Message
           in: int
-        format: int64
-        type: integer
+        type: string
         x-go-name: Value
     type: object
+    x-go-name: Message
     x-go-package: casaattivita/models
   CommonError:
     properties:
@@ -118,6 +118,49 @@ definitions:
         x-go-name: Status
     type: object
     x-go-package: casaattivita/controllers
+  GetMessage:
+    properties:
+      data:
+        $ref: '#/definitions/Activity'
+      message:
+        description: |-
+          Message of the response
+          in: string
+        type: string
+        x-go-name: Message
+      status:
+        description: |-
+          Status of the error
+          in: int64
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: casaattivita/controllers
+  GetMessages:
+    properties:
+      data:
+        $ref: '#/definitions/Messages'
+      message:
+        description: |-
+          Message of the response
+          in: string
+        type: string
+        x-go-name: Message
+      status:
+        description: |-
+          Status of the error
+          in: int64
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: casaattivita/controllers
+  Messages:
+    items:
+      $ref: '#/definitions/Activity'
+    type: array
+    x-go-package: casaattivita/models
   ReqAddActivity:
     properties:
       valore:
@@ -195,6 +238,38 @@ paths:
           description: GetActivities
           schema:
             $ref: '#/definitions/GetActivities'
+        "401":
+          description: CommonError
+          schema:
+            $ref: '#/definitions/CommonError'
+      security:
+      - apiKey:
+        - '[]'
+  /message:
+    post:
+      description: Create a new Message value
+      operationId: addMessage
+      responses:
+        "200":
+          description: GetMessage
+          schema:
+            $ref: '#/definitions/GetMessage'
+        "401":
+          description: CommonError
+          schema:
+            $ref: '#/definitions/CommonError'
+      security:
+      - apiKey:
+        - '[]'
+  /messages:
+    get:
+      description: Get list of last hour of Messages .... or the last value inserted
+      operationId: messages
+      responses:
+        "200":
+          description: GetMessages
+          schema:
+            $ref: '#/definitions/GetMessages'
         "401":
           description: CommonError
           schema:

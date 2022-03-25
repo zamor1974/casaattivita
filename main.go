@@ -45,6 +45,9 @@ func main() {
 	pioggia.HandleFunc("/lasthour", hsqlx.GetLastHourSqlx).Methods("GET")
 	pioggia.HandleFunc("/isactive", hsqlx.GetIsActiveSqlx).Methods("GET")
 
+	pioggia.HandleFunc("/message", hsqlx.PostMessageSqlx).Methods("POST")
+	pioggia.HandleFunc("/messages", hsqlx.GetMessagesSqlx).Methods("GET")
+
 	http.Handle("/", r)
 	s := &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", "", "5554"),
